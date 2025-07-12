@@ -3,9 +3,9 @@ import Navbar from './components/Navbar';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Navbar />
-      <main className="p-6">
+      <main>
         <Outlet />
       </main>
     </div>
