@@ -1,11 +1,11 @@
 from beanie import Document, Indexed
 from pydantic import EmailStr, Field
-from typing import List, Optional
+from typing import List, Optional, Annotated
 from datetime import datetime
-from bson import ObjectId
+from beanie import PydanticObjectId
 
 class User(Document):
-    email: Indexed(EmailStr, unique=True)
+    email: Annotated[EmailStr, Indexed(unique=True)]
     full_name: str
     password: str
     skills: List[str] = []
@@ -15,15 +15,10 @@ class User(Document):
     
     class Settings:
         name = "users"
-        
-    class Config:
-        json_encoders = {
-            ObjectId: str
-        }
 
 class SkillSwapRequest(Document):
-    requester_id: ObjectId
-    target_user_id: ObjectId
+    requester_id: PydanticObjectId
+    target_user_id: PydanticObjectId
     skill_offered: str
     skill_requested: str
     description: str
@@ -33,8 +28,3 @@ class SkillSwapRequest(Document):
     
     class Settings:
         name = "skill_swap_requests"
-        
-    class Config:
-        json_encoders = {
-            ObjectId: str
-        }

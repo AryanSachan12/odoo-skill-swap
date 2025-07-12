@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
 from models import SkillSwapRequest, User
-from bson import ObjectId
+from beanie import PydanticObjectId
 
 router = APIRouter(prefix="/api/skills", tags=["Skills"])
 
@@ -41,7 +41,7 @@ class SkillSwapResponse(BaseModel):
 async def get_user_name(user_id: str) -> str:
     """Helper function to get user name by ID"""
     try:
-        user = await User.get(ObjectId(user_id))
+        user = await User.get(PydanticObjectId(user_id))
         return user.full_name if user else f"User {user_id}"
     except:
         return f"User {user_id}"
@@ -84,7 +84,7 @@ async def create_swap_request(request_data: SkillSwapRequestCreate):
     
     # Validate target user exists
     try:
-        target_user = await User.get(ObjectId(request_data.target_user_id))
+        target_user = await User.get(PydanticObjectId(request_data.target_user_id))
         if not target_user:
             raise HTTPException(status_code=404, detail="Target user not found")
     except:
@@ -93,7 +93,7 @@ async def create_swap_request(request_data: SkillSwapRequestCreate):
     # Create new request
     new_request = SkillSwapRequest(
         requester_id=requester_id,
-        target_user_id=ObjectId(request_data.target_user_id),
+        target_user_id=PydanticObjectId(request_data.target_user_id),
         skill_offered=request_data.skill_offered,
         skill_requested=request_data.skill_requested,
         description=request_data.description,
@@ -122,7 +122,7 @@ async def create_swap_request(request_data: SkillSwapRequestCreate):
 async def update_swap_request_status(request_id: str, status: str):
     """Update the status of a swap request"""
     try:
-        request = await SkillSwapRequest.get(ObjectId(request_id))
+        request = await SkillSwapRequest.get(PydanticObjectId(request_id))
         if not request:
             raise HTTPException(status_code=404, detail="Swap request not found")
     except:
@@ -164,7 +164,7 @@ async def get_available_skills():
 async def get_user_requests(user_id: str):
     """Get all requests for a specific user"""
     try:
-        user_object_id = ObjectId(user_id)
+        user_object_id = PydanticObjectId(user_id)
     except:
         raise HTTPException(status_code=400, detail="Invalid user ID")
     

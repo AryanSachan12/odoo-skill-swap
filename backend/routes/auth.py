@@ -3,7 +3,7 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional
 from passlib.context import CryptContext
 from models import User
-from bson import ObjectId
+from beanie import PydanticObjectId
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
@@ -15,27 +15,6 @@ def hash_password(password: str) -> str:
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
-
-# Pydantic models for request/response
-class UserRegister(BaseModel):
-    email: EmailStr
-    password: str
-    full_name: str
-    skills: Optional[list[str]] = []
-
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
-
-class UserResponse(BaseModel):
-    id: str
-    email: str
-    full_name: str
-    skills: list[str]
-    is_active: bool
-    
-    class Config:
-        from_attributes = True
 
 # Pydantic models for request/response
 class UserRegister(BaseModel):
