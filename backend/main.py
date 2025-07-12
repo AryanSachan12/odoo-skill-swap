@@ -9,6 +9,9 @@ import os
 from routes.auth import router as auth_router
 from routes.skills import router as skills_router
 
+# Import database connection
+from database import connect_to_mongo, close_mongo_connection
+
 # Load environment variables
 load_dotenv()
 
@@ -20,6 +23,15 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url="/redoc"
 )
+
+# Database events
+@app.on_event("startup")
+async def startup_event():
+    await connect_to_mongo()
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    await close_mongo_connection()
 
 # CORS middleware configuration
 app.add_middleware(
